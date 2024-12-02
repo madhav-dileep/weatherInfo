@@ -8,7 +8,7 @@
 </head>
 <body>
 
-    <div style="height: 100dvh;box-sizing: border-box;background-size: cover;background-repeat: repeat-y; background-image: url('https://images.hdqwalls.com/download/milky-way-on-starry-night-landscape-4k-vk-3840x2160.jpg');" class="container-fluid">
+    <div style="height: 100dvh;background-size: cover;background-repeat: repeat; background-image: url('https://images.hdqwalls.com/download/milky-way-on-starry-night-landscape-4k-vk-3840x2160.jpg');" class="container-fluid">
         <div class="pt-5 container-fluid">
             <div style="backdrop-filter: blur(12px);min-height: 600px;" class="container shadow rounded-5 mt-5">
                 <div style="min-height: 600px;" class="row rounded-5 shadow-lg">
@@ -45,38 +45,41 @@
 <script>
     // url = "http://api.weatherapi.com/v1/current.json?key=ef0221e6f42c49e2ba7165449240212&q={city}}&aqi=no"
     // const api_key = "ef0221e6f42c49e2ba7165449240212"
+    // api_key = 8ce08beaba8d257338d707839b490ece
     const error = document.getElementById("errormsg")
     var weatherData = ""
 
     const getWeatherData= async () =>{
         if(userInput.value){
             error.innerHTML = ""
-            response = await fetch(`http://api.weatherapi.com/v1/current.json?key=ef0221e6f42c49e2ba7165449240212&q=${userInput.value}`,{method:"GET"})
+            response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${userInput.value}&appid=8ce08beaba8d257338d707839b490ece`,{method:"GET"})
             console.log(response);
             
             if(response.status == 200){
                 error.innerHTML = ""
                 weatherData = await response.json();
                 console.log(weatherData);
+                console.log(weatherData.main.temp-274.15);
+                // Math.round((weatherData.main.feels_like-274.15)*100)/100
+                
                 result1.innerHTML = `
-                    <span style="font-size: 8rem;" class="fw-bolder d-block">${weatherData.current.temp_c}°C 
-                                <span><img src=${weatherData.current.condition.icon} width="100px" alt=""></span>
-                    </span>
-                    <span class="fs-5 ms-3 fw-lighter">Feels like ${weatherData.current.feelslike_c}°C</span>
-                    <span style="font-size: 3.5rem;" class="mt-5 mb-0 ms-5 d-block">${weatherData.location.name}</span>
-                    <span class="d-block ms-5 fs-6">${weatherData.location.localtime}</span>`
+                                <span style="font-size: 8rem;" class="fw-bolder d-block">${(Math.round((weatherData.main.temp-274.15) * 100) / 100)}°C 
+                                            <span><img src=${''} width="100px" alt=""></span>
+                                </span>
+                                <span class="fs-5 ms-3 fw-lighter">Feels like ${(Math.round((weatherData.main.feels_like-274.15)*100)/100)}°C</span>
+                                <span style="font-size: 3.5rem;" class="mt-5 mb-0 ms-5 d-block">${weatherData.name}</span>
+                                <span class="d-block ms-5 fs-6">${""}</span>`
                 
                 result2.innerHTML = `
                                 <ul class="list-group gap-3">
-                                    <li class="list-group-item bg-transparent text-light border border-0 rounded-0 pb-2 fs-4 fw-bold">Cloudy <span class="float-end fw-light">${weatherData.current.cloud}%</span></li>
-                                        <div class="progress mb-3 mx-4" style="height: 2px;"><div class="progress-bar" style="width: ${weatherData.current.cloud}%;"></div></div>
+                                    <li class="list-group-item bg-transparent text-light border border-0 rounded-0 pb-2 fs-4 fw-bold">Cloudy <span class="float-end fw-light">${weatherData.clouds.all}%</span></li>
+                                        <div class="progress mb-3 mx-4" style="height: 2px;"><div class="progress-bar" style="width: ${weatherData.clouds.all}%;"></div></div>
 
-                                    <li class="list-group-item bg-transparent text-light border border-0  rounded-0 pb-2 fs-4  fw-bold">Humidity <span class="float-end fw-light">${weatherData.current.humidity}%</span></li>
-                                        <div class="progress mb-3 mx-4" style="height: 3px;"><div class="progress-bar" style="width: ${weatherData.current.humidity}%;"></div></div>
+                                    <li class="list-group-item bg-transparent text-light border border-0  rounded-0 pb-2 fs-4  fw-bold">Humidity <span class="float-end fw-light">${weatherData.main.humidity}%</span></li>
+                                        <div class="progress mb-3 mx-4" style="height: 3px;"><div class="progress-bar" style="width: ${weatherData.main.humidity}%;"></div></div>
 
-                                    <li class="list-group-item bg-transparent text-light border border-0  rounded-0 pb-4 fs-4 fw-bold">Wind <span class="float-end fw-light">${weatherData.current.wind_kph}km/h</span></li>
-                                    <li class="list-group-item bg-transparent text-light border border-0 rounded-0 pb-4 fs-4 fw-bold">Rain <span class="float-end fw-light">${weatherData.current.precip_mm}mm</span></li>
-                                </ul>`
+                                    <li class="list-group-item bg-transparent text-light border border-0  rounded-0 pb-4 fs-4 fw-bold">Wind <span class="float-end fw-light">${weatherData.wind.speed}km/h</span></li>
+                                `
                 
             }else{
                 error.innerHTML = "Enter a Valid City!"
